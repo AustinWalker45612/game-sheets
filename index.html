@@ -225,7 +225,7 @@ details.more > summary { cursor: pointer; font-weight: 600; font-size: 14px; mar
 </style>
 <div class="strip">
 <div class="wrap strip-in">
-<div class="wk"><b hidden="" id="wk-label">NFL</b><select aria-label="Week" id="wk-sel"><option value="11">Week 11</option><option value="12" selected>Week 12</option></select><span>Pick a game</span></div>
+<div class="wk"><b hidden="" id="wk-label">NFL</b><select aria-label="Week" id="wk-sel"><option value="8">Week 8</option><option value="10">Week 10</option><option value="11">Week 11</option><option value="12" selected>Week 12</option></select><span>Pick a game</span></div>
 <div aria-label="Games this week" class="chips" id="chips" role="group"></div>
 </div>
 </div>
@@ -881,7 +881,7 @@ img.lg { object-fit: contain; flex: none; display: inline-block; }
 @media (max-width: 760px) { .badge.logo { width: 60px; height: 60px; } }
 @media print { .bar, .totop { display: none; } .card { box-shadow: none; break-inside: avoid; } }
 </style>
-<script id="wk-nav">(function(){var s=document.getElementById("wk-sel");if(!s)return;var m={"11":"week11.html","12":"week12.html"};s.addEventListener("change",function(){location.href=m[s.value]||"week12.html";});})();</script><section class="wrap watch" id="rebuild"><div class="card"><style>body:not(.rbmode) #rebuild{display:none}body.rbmode header.score,body.rbmode .bar,body.rbmode #watch,body.rbmode main.page{display:none}body.rbmode .chip[aria-pressed="true"]:not(.chip-rb){background:transparent;border-bottom-color:transparent}.chip-rb{min-width:110px;display:flex;flex-direction:column;justify-content:center;font-weight:700;font-size:15px;color:#fff;background:rgba(255,140,0,.22)}.chip-rb small{display:block;font-size:11px;font-weight:500;opacity:.8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}#rebuild ul{margin:6px 0 12px 18px;padding:0}#rebuild li{margin:4px 0}</style>
+<script id="wk-nav">(function(){var s=document.getElementById("wk-sel");if(!s)return;var m={"8":"week8.html","10":"week10.html","11":"week11.html","12":"week12.html"};s.addEventListener("change",function(){location.href=m[s.value]||"week12.html";});})();</script><section class="wrap watch" id="rebuild"><div class="card"><style>body:not(.rbmode) #rebuild{display:none}body.rbmode header.score,body.rbmode .bar,body.rbmode #watch,body.rbmode main.page{display:none}body.rbmode .chip[aria-pressed="true"]:not(.chip-rb){background:transparent;border-bottom-color:transparent}.chip-rb{min-width:110px;display:flex;flex-direction:column;justify-content:center;font-weight:700;font-size:15px;color:#fff;background:rgba(255,140,0,.22)}.chip-rb small{display:block;font-size:11px;font-weight:500;opacity:.8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}#rebuild ul{margin:6px 0 12px 18px;padding:0}#rebuild li{margin:4px 0}</style>
 <h2>Rebuild in progress<small style="margin-left:10px">no predictions this week</small></h2>
 <p>The matchups below show this season's stats only. Score predictions, touchdown chances, props and parlays are paused while the player sim is rebuilt.</p>
 <h3>Why</h3><ul>
