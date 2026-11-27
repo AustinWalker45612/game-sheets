@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Game Sheets · Bet tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e9ecf1;--card:#ffffff;--ink:#151a23;--muted:#5d6675;--line:#dde1e8;--line-strong:#c3c9d4;--accent:#2a4bc9;--accent-ink:#fff;--head:#10151f;--head-ink:#fff;--good:#17803d;--warn:#b45f06;--bad:#c0262d;--soft:#f3f5f8;--display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;--body:"Source Sans 3","Segoe UI",Arial,sans-serif;--shadow-1:0 1px 3px rgba(16,21,31,.08);color-scheme:light}
+@media (prefers-color-scheme: dark){:root{--bg:#0d1117;--card:#161c26;--ink:#e8ecf3;--muted:#9aa5b6;--line:#262f3d;--line-strong:#364256;--accent:#7b96ff;--accent-ink:#0d1117;--head:#0a0e14;--head-ink:#f2f5fa;--good:#4cc27a;--warn:#f0a24c;--bad:#ff6b72;--soft:#1b2331;--shadow-1:0 1px 2px rgba(0,0,0,.4);color-scheme:dark}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:var(--body);font-size:15.5px;line-height:1.45;color:var(--ink);-webkit-font-smoothing:antialiased;background:radial-gradient(1100px 420px at 50% -80px,color-mix(in srgb,var(--accent) 9%,transparent),transparent 70%),var(--bg);background-attachment:fixed}
+.wrap{max-width:900px;margin-inline:auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.strip{background:linear-gradient(180deg,color-mix(in srgb,var(--head) 88%,#2a3a66),var(--head));color:var(--head-ink);box-shadow:inset 0 -1px 0 rgba(255,255,255,.06)}
+.strip-in{display:flex;align-items:stretch;min-height:80px}
+.home-btn{flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:8px 16px;border-right:1px solid rgba(255,255,255,.18);color:inherit;text-decoration:none;font-family:var(--display);text-transform:uppercase;font-size:13px;font-weight:600;letter-spacing:.08em;border-bottom:3px solid transparent}
+.home-btn:hover,.home-btn:focus-visible{background:rgba(255,255,255,.1)}
+.home-btn.on{background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.17));border-bottom-color:var(--accent)}
+.wk{flex:none;display:flex;flex-direction:column;justify-content:center;padding:8px 16px 8px 16px;border-right:1px solid rgba(255,255,255,.18);font-family:var(--display);text-transform:uppercase;line-height:1.1}
+.wk span{font-size:12px;letter-spacing:.08em;opacity:.7}
+#wk-sel{font:inherit;font-family:var(--display);font-size:20px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;color:inherit;background:transparent;border:0;padding:0 18px 0 0;margin:0;cursor:pointer;outline-offset:3px;-webkit-appearance:none;appearance:none;line-height:1.1;background-image:linear-gradient(45deg,transparent 50%,currentColor 50%),linear-gradient(135deg,currentColor 50%,transparent 50%);background-position:calc(100% - 7px) 55%,calc(100% - 2px) 55%;background-size:5px 5px,5px 5px;background-repeat:no-repeat}
+#wk-sel option{color:#10151f;background:#fff;text-transform:none;font-weight:600}
+main{max-width:900px;margin:0 auto;padding:16px max(16px,env(safe-area-inset-left,0px)) 44px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow-1);padding:20px;margin:14px 0;min-width:0}
+.hero h1{font:600 34px/1.05 var(--display);text-transform:uppercase;letter-spacing:.03em;margin:0 0 8px}.hero p{margin:0;color:var(--muted);max-width:640px}
+h2{position:relative;font-family:var(--display);font-weight:600;font-size:21px;text-transform:uppercase;letter-spacing:.03em;padding:0 0 8px 14px;border-bottom:1px solid var(--line);margin:0 0 12px}
+h2:before{content:"";position:absolute;left:0;top:2px;bottom:10px;width:4px;border-radius:2px;background:var(--accent)}
+h2 small{font-family:var(--body);font-size:12px;text-transform:none;letter-spacing:0;color:var(--muted);font-weight:500;margin-left:8px}
+.m{color:var(--muted);font-size:14px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.kpi{border:1px solid var(--line);background:var(--soft);border-radius:12px;padding:10px 12px}.kpi b{display:block;font-size:22px;font-family:var(--display);letter-spacing:.02em}.kpi span{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.pos{color:var(--good)}.neg{color:var(--bad)}.zero{color:var(--muted)}
+.chart{position:relative;margin-top:6px}.chart svg{width:100%;height:auto;display:block;touch-action:pan-y}
+.tip{position:absolute;pointer-events:none;background:var(--card);border:1px solid var(--line-strong);border-radius:8px;padding:6px 9px;font-size:13px;box-shadow:var(--shadow-1);display:none;max-width:230px;z-index:2}
+.empty{color:var(--muted);padding:18px 4px;text-align:center}
+form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+label{display:flex;flex-direction:column;gap:3px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+label.full,.full{grid-column:1/-1}
+input,select,textarea,button{font:inherit;color:var(--ink)}
+input,select,textarea{width:100%;background:var(--soft);border:1px solid var(--line-strong);border-radius:10px;padding:10px 11px;font-size:16px;text-transform:none;letter-spacing:0}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px}
+.chk{flex-direction:row;align-items:center;gap:8px;text-transform:none;letter-spacing:0;font-size:14px}.chk input{width:auto}
+.btn{background:var(--accent);color:var(--accent-ink);border:0;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer}
+.btn.sec{background:transparent;color:var(--ink);border:1px solid var(--line-strong)}.btn.bad{background:var(--bad);color:#fff}.btn.sm{padding:5px 10px;font-size:13px;border-radius:8px}
+.row-actions{display:flex;gap:8px;flex-wrap:wrap}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:14.5px}
+th{text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:6px 6px;border-bottom:2px solid var(--line);white-space:nowrap}
+td{padding:7px 6px;border-bottom:1px solid var(--line);vertical-align:top}td.n{white-space:nowrap;text-align:right}th.n{text-align:right}
+tr.ex td{opacity:.55}.bc{border-top:1px solid var(--line);padding:11px 2px}.bc:first-child{border-top:0}.bc.ex{opacity:.6}.bc-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}.bc-top .st{white-space:nowrap}.bc b.t{display:block;font-size:16px;margin:2px 0 3px}.bc .row-actions{margin-top:8px}.tag{display:inline-block;font-size:11px;text-transform:uppercase;letter-spacing:.05em;border:1px solid var(--line-strong);border-radius:999px;padding:1px 7px;color:var(--muted);margin-right:4px}
+.st{font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.05em}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 10px}.filters button{background:transparent;border:1px solid var(--line-strong);border-radius:999px;padding:4px 12px;cursor:pointer;font-size:14px}.filters button[aria-pressed=true]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.note{background:var(--soft);border:1px solid var(--line-strong);border-left:3px solid var(--warn);border-radius:10px;padding:10px 13px;font-size:14px;margin-top:10px}
+.msg{font-size:14px;margin-top:8px;min-height:1em}
+.hint{font-size:13px;color:var(--muted);margin-top:3px}
+@media(max-width:520px){form{grid-template-columns:1fr 1fr}td,th{padding:6px 4px}table{font-size:14px}}
+</style></head><body>
+<div class="strip"><div class="wrap strip-in">
+<a class="home-btn" href="index.html" aria-label="Home"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10"/><path d="M10 20v-5.5h4V20"/></svg><span>Home</span></a>
+<a class="home-btn bets-btn on" href="bets.html" aria-label="Bets"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19V5"/><path d="M4 19h16"/><path d="m7 15 4-5 3 3 5-7"/></svg><span>Bets</span></a>
+<div class="wk"><select aria-label="Page" id="wk-sel"><option value="0">Home</option><option value="b" selected>Bets</option><option value="11">Week 11</option><option value="12">Week 12</option></select><span>Pick a page</span></div>
+</div></div>
+<script>(function(){var s=document.getElementById("wk-sel"),m={"0":"index.html","b":"bets.html","11":"week11.html","12":"week12.html"};s.addEventListener("change",function(){location.href=m[s.value]||"index.html";});})();</script>
+<main>
+<section class="card hero"><h1>Bet tracker</h1><p>Log the bets you actually place and watch your real money move. Everything you enter stays in this browser on this device. It is never sent anywhere and never added to the public site.</p></section>
+
+<section class="card"><h2>Your results <small id="kpiNote"></small></h2><div class="kpis" id="kpis"></div></section>
+
+<section class="card"><h2>Profit over time <small>cumulative, settled bets</small></h2>
+<div class="chart" id="chart1"></div><div class="tip" id="tip1"></div></section>
+
+<section class="card"><h2>Profit by week <small>weeks start Monday</small></h2>
+<div class="chart" id="chart2"></div><div class="tip" id="tip2"></div></section>
+
+<section class="card"><h2 id="formTitle">Add a bet</h2>
+<form id="f" autocomplete="off">
+<label>Date<input type="date" id="fDate" required></label>
+<label>Type<select id="fType"><option>Anytime TD</option><option>Receiving yards</option><option>Parlay</option><option>Prediction market</option><option>Other</option></select></label>
+<label class="full">Bet<input id="fDesc" placeholder="e.g. Odunze 70+ rec yds, Lemon 40+ rec yds" required maxlength="140"></label>
+<label>Book<select id="fBook"><option>DraftKings</option><option>FanDuel</option><option>Prediction market</option><option>Other</option></select></label>
+<label>Odds (American)<input id="fOdds" inputmode="numeric" placeholder="+250 or -130"></label>
+<label>Stake ($)<input id="fStake" inputmode="decimal" placeholder="10" required></label>
+<label>Status<select id="fStatus"><option value="pending">Pending</option><option value="win">Won</option><option value="loss">Lost</option><option value="cashout">Cashed out</option><option value="void">Void / refunded</option></select></label>
+<label id="cashWrap" style="display:none">Cash-out total ($)<input id="fCash" inputmode="decimal" placeholder="amount you got back"></label>
+<label>Tag (optional)<input id="fTag" placeholder="scalp, hedge, lottery…" maxlength="24"></label>
+<label class="full">Notes (optional)<input id="fNotes" maxlength="200"></label>
+<label class="chk full"><input type="checkbox" id="fEx"> Leave this bet out of the totals (it stays in the list)</label>
+<div class="full row-actions"><button class="btn" type="submit" id="fSave">Save bet</button><button class="btn sec" type="button" id="fCancel" style="display:none">Cancel edit</button></div>
+<div class="full hint" id="fHint">A winning bet pays stake × odds. Pending bets are counted as money at risk until you settle them.</div>
+<div class="full msg" id="fMsg" role="status"></div>
+</form></section>
+
+<section class="card"><h2>Your bets <small id="listNote"></small></h2>
+<div class="filters" id="filters"></div>
+<div id="blist"></div>
+<div class="empty" id="emptyMsg" style="display:none">No bets yet. Add your first one above.</div></section>
+
+<section class="card"><h2>By type and tag</h2><div class="tw"><table id="typeTbl"><thead><tr><th>Group</th><th class="n">Bets</th><th class="n">W–L</th><th class="n">Staked</th><th class="n">Profit</th><th class="n">ROI</th></tr></thead><tbody id="typeTb"></tbody></table></div></section>
+
+<section class="card"><h2>Your data</h2>
+<label>Starting bankroll ($) <span class="m" style="text-transform:none;letter-spacing:0">optional, shows your balance</span><input id="bankroll" inputmode="decimal" placeholder="0"></label>
+<div class="row-actions" style="margin-top:12px"><button class="btn sec" id="exJson">Export backup (JSON)</button><button class="btn sec" id="exCsv">Export spreadsheet (CSV)</button><label class="btn sec" style="cursor:pointer;display:inline-block;text-transform:none;letter-spacing:0;font-size:inherit;color:var(--ink)">Import backup<input type="file" id="imp" accept="application/json,.json" style="display:none"></label><button class="btn bad" id="clr">Delete all bets</button></div>
+<div class="msg" id="dMsg" role="status"></div>
+<div class="note"><b>Where your data lives.</b> It is saved only in this browser, on this device. If you clear the browser's data or switch phones, it is gone unless you exported a backup. Phone and computer do not sync: export on one, import on the other. This page is a record-keeper, not advice. If betting stops feeling like a choice, 1-800-GAMBLER is free and confidential.</div></section>
+</main>
+<script>
+(function(){
+"use strict";
+var KEY="gs_bets_v1",S={bankroll:0,bets:[]},edit=null,filter="all",memOnly=false;
+function $(id){return document.getElementById(id)}
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function load(){try{var r=localStorage.getItem(KEY);if(r){var o=JSON.parse(r);if(o&&Array.isArray(o.bets)){S.bets=o.bets;S.bankroll=+o.bankroll||0}}}catch(e){memOnly=true}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));memOnly=false}catch(e){memOnly=true}}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function dec(o){o=+o;return o>0?1+o/100:1+100/Math.abs(o)}
+function money0(v){var a=Math.abs(Math.round(v)).toString().replace(/\B(?=(\d{3})+(?!\d))/g,",");return(v<0?"\u2212":"")+"$"+a}
+function money(v,sign){var a=Math.abs(v).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,",");return(v<0?"−":(sign&&v>0?"+":""))+"$"+a}
+function cls(v){return v>0.004?"pos":(v<-0.004?"neg":"zero")}
+function profit(b){
+  var st=+b.stake||0;
+  if(b.status==="win")return b.odds!==""&&b.odds!=null&&!isNaN(+b.odds)?st*(dec(b.odds)-1):(b.payout?+b.payout-st:0);
+  if(b.status==="loss")return-st;
+  if(b.status==="cashout")return(+b.cash||0)-st;
+  return b.status==="void"?0:null;
+}
+function counted(b){return !b.excl}
+function settled(b){return b.status==="win"||b.status==="loss"||b.status==="cashout"}
+function ymd(d){return d}
+function mondayOf(s){var p=s.split("-"),d=new Date(Date.UTC(+p[0],+p[1]-1,+p[2]));var wd=(d.getUTCDay()+6)%7;d.setUTCDate(d.getUTCDate()-wd);return d.toISOString().slice(0,10)}
+function fmtD(s){var p=s.split("-");var mo=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];return mo[+p[1]-1]+" "+(+p[2])}
+function sorted(arr){return arr.slice().sort(function(a,b){return a.date<b.date?-1:a.date>b.date?1:(a.created||0)-(b.created||0)})}
+/* ---- stats ---- */
+function stats(list){
+  var o={n:0,w:0,l:0,v:0,staked:0,profit:0,pend:0,pendN:0};
+  list.forEach(function(b){
+    if(!counted(b))return;
+    var p=profit(b);
+    if(b.status==="pending"){o.pend+=+b.stake||0;o.pendN++;return}
+    if(b.status==="void"){o.v++;return}
+    o.n++;o.staked+=+b.stake||0;o.profit+=p;
+    if(p>0.004)o.w++;else if(p<-0.004)o.l++;
+  });
+  return o;
+}
+function renderKpis(){
+  var s=stats(S.bets),roi=s.staked>0?100*s.profit/s.staked:null;
+  var items=[["Net profit",money(s.profit,true),cls(s.profit)],["ROI",roi==null?"—":(roi>=0?"+":"−")+Math.abs(roi).toFixed(0)+"%",roi==null?"zero":cls(roi)],["Record",s.w+"–"+s.l+(s.v?" ("+s.v+" void)":""),""],["Staked (settled)",money(s.staked),""],["At risk now",money(s.pend)+(s.pendN?" · "+s.pendN:""),s.pend?"":"zero"]];
+  if(S.bankroll>0)items.push(["Balance",money(S.bankroll+s.profit),cls(s.profit)]);
+  $("kpis").innerHTML=items.map(function(i){return '<div class="kpi"><span>'+i[0]+'</span><b class="'+i[2]+'">'+i[1]+'</b></div>'}).join("");
+  var ex=S.bets.filter(function(b){return b.excl}).length;
+  $("kpiNote").textContent=ex?ex+" bet"+(ex>1?"s":"")+" left out of totals":"";
+}
+/* ---- charts ---- */
+function niceStep(range,n){var r=range/n,p=Math.pow(10,Math.floor(Math.log10(r))),f=r/p;return(f<=1?1:f<=2?2:f<=5?5:10)*p}
+function lineChart(){
+  var pts=[],cum=0;
+  sorted(S.bets).forEach(function(b){if(!counted(b)||!settled(b))return;var p=profit(b);cum+=p;pts.push({d:b.date,v:cum,p:p,t:b.desc})});
+  var box=$("chart1");
+  if(!pts.length){box.innerHTML='<div class="empty">Your profit line appears once you have a settled bet.</div>';return}
+  var all=[{d:pts[0].d,v:0,p:0,t:"Start"}].concat(pts);
+  var W=520,H=270,L=58,R=14,T=14,B=30,mn=Math.min.apply(null,all.map(function(a){return a.v}).concat([0])),mx=Math.max.apply(null,all.map(function(a){return a.v}).concat([0]));
+  if(mx===mn){mx+=10;mn-=10}
+  var step=niceStep(mx-mn,4);mn=Math.floor(mn/step)*step;mx=Math.ceil(mx/step)*step;
+  var x=function(i){return L+(all.length===1?0:i*(W-L-R)/(all.length-1))},y=function(v){return T+(mx-v)*(H-T-B)/(mx-mn)};
+  var g="",t;for(t=mn;t<=mx+1e-9;t+=step){g+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y(t)+'" y2="'+y(t)+'" stroke="var(--line)"/><text x="'+(L-6)+'" y="'+(y(t)+4)+'" text-anchor="end" font-size="13" fill="var(--muted)">'+money0(t)+'</text>'}
+  var d="M"+all.map(function(a,i){return x(i).toFixed(1)+","+y(a.v).toFixed(1)}).join(" L");
+  var area=d+" L"+x(all.length-1).toFixed(1)+","+y(0).toFixed(1)+" L"+x(0).toFixed(1)+","+y(0).toFixed(1)+" Z";
+  var last=all[all.length-1],col=last.v>=0?"var(--good)":"var(--bad)";
+  var dots=all.map(function(a,i){return i?'<circle cx="'+x(i).toFixed(1)+'" cy="'+y(a.v).toFixed(1)+'" r="'+(all.length>60?1.6:3)+'" fill="'+(a.p>=0?"var(--good)":"var(--bad)")+'"/>':""}).join("");
+  box.innerHTML='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Cumulative profit"><defs><linearGradient id="ga" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="'+col+'" stop-opacity=".28"/><stop offset="1" stop-color="'+col+'" stop-opacity=".02"/></linearGradient></defs>'+g+'<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y(0)+'" y2="'+y(0)+'" stroke="var(--line-strong)" stroke-dasharray="4 4"/><path d="'+area+'" fill="url(#ga)"/><path d="'+d+'" fill="none" stroke="'+col+'" stroke-width="2.5" stroke-linejoin="round"/>'+dots+'<text x="'+L+'" y="'+(H-8)+'" font-size="13" fill="var(--muted)">'+fmtD(all[1].d)+'</text><text x="'+(W-R)+'" y="'+(H-8)+'" text-anchor="end" font-size="13" fill="var(--muted)">'+fmtD(last.d)+' · bet '+pts.length+'</text><line id="cur1" y1="'+T+'" y2="'+(H-B)+'" stroke="var(--muted)" stroke-dasharray="3 3" style="display:none"/></svg>';
+  var svg=box.querySelector("svg"),tip=$("tip1"),cur=svg.querySelector("#cur1");
+  function mv(e){var r=svg.getBoundingClientRect(),px=(e.clientX-r.left)*W/r.width,i=Math.round((px-L)*(all.length-1)/(W-L-R));i=Math.max(0,Math.min(all.length-1,i));var a=all[i];cur.setAttribute("x1",x(i));cur.setAttribute("x2",x(i));cur.style.display="";tip.style.display="block";tip.innerHTML="<b>"+fmtD(a.d)+"</b> · "+money(a.v,true)+(i?"<br><span class='m'>"+esc(a.t)+" ("+money(a.p,true)+")</span>":"");var tx=(x(i)/W)*r.width;tip.style.left=Math.max(4,Math.min(r.width-tip.offsetWidth-4,tx-tip.offsetWidth/2))+"px";tip.style.top="0px"}
+  function lv(){tip.style.display="none";cur.style.display="none"}
+  svg.addEventListener("pointermove",mv);svg.addEventListener("pointerdown",mv);svg.addEventListener("pointerleave",lv);
+}
+function barChart(){
+  var wk={};sorted(S.bets).forEach(function(b){if(!counted(b)||!settled(b))return;var k=mondayOf(b.date);wk[k]=(wk[k]||0)+profit(b)});
+  var keys=Object.keys(wk).sort(),box=$("chart2");
+  if(!keys.length){box.innerHTML='<div class="empty">Weekly bars appear once you have a settled bet.</div>';return}
+  var W=520,H=230,L=58,R=14,T=12,B=30,vals=keys.map(function(k){return wk[k]}),mn=Math.min.apply(null,vals.concat([0])),mx=Math.max.apply(null,vals.concat([0]));
+  if(mx===mn){mx+=10;mn-=10}
+  var step=niceStep(mx-mn,4);mn=Math.floor(mn/step)*step;mx=Math.ceil(mx/step)*step;
+  var y=function(v){return T+(mx-v)*(H-T-B)/(mx-mn)},bw=(W-L-R)/keys.length,g="",t;
+  for(t=mn;t<=mx+1e-9;t+=step)g+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y(t)+'" y2="'+y(t)+'" stroke="var(--line)"/><text x="'+(L-6)+'" y="'+(y(t)+4)+'" text-anchor="end" font-size="13" fill="var(--muted)">'+money0(t)+'</text>';
+  var bars=keys.map(function(k,i){var v=wk[k],x0=L+i*bw+bw*.15,w=bw*.7,y0=y(0),y1=y(v);return '<rect data-i="'+i+'" x="'+x0.toFixed(1)+'" y="'+Math.min(y0,y1).toFixed(1)+'" width="'+w.toFixed(1)+'" height="'+Math.max(1,Math.abs(y0-y1)).toFixed(1)+'" rx="3" fill="'+(v>=0?"var(--good)":"var(--bad)")+'"/>'}).join("");
+  var lab=keys.length<=8?keys.map(function(k,i){return '<text x="'+(L+i*bw+bw/2).toFixed(1)+'" y="'+(H-8)+'" text-anchor="middle" font-size="13" fill="var(--muted)">'+fmtD(k)+'</text>'}).join(""):'<text x="'+L+'" y="'+(H-8)+'" font-size="13" fill="var(--muted)">'+fmtD(keys[0])+'</text><text x="'+(W-R)+'" y="'+(H-8)+'" text-anchor="end" font-size="13" fill="var(--muted)">'+fmtD(keys[keys.length-1])+'</text>';
+  box.innerHTML='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Profit by week">'+g+'<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y(0)+'" y2="'+y(0)+'" stroke="var(--line-strong)"/>'+bars+lab+'</svg>';
+  var svg=box.querySelector("svg"),tip=$("tip2");
+  function mv(e){var r=svg.getBoundingClientRect(),px=(e.clientX-r.left)*W/r.width,i=Math.floor((px-L)/bw);if(i<0||i>=keys.length){tip.style.display="none";return}tip.style.display="block";tip.innerHTML="<b>Week of "+fmtD(keys[i])+"</b><br>"+money(wk[keys[i]],true);var tx=((L+i*bw+bw/2)/W)*r.width;tip.style.left=Math.max(4,Math.min(r.width-tip.offsetWidth-4,tx-tip.offsetWidth/2))+"px";tip.style.top="0px"}
+  svg.addEventListener("pointermove",mv);svg.addEventListener("pointerdown",mv);svg.addEventListener("pointerleave",function(){tip.style.display="none"});
+}
+/* ---- list ---- */
+var FILTERS=[["all","All"],["pending","Pending"],["settled","Settled"],["win","Won"],["loss","Lost"]];
+function renderFilters(){$("filters").innerHTML=FILTERS.map(function(f){return '<button type="button" data-f="'+f[0]+'" aria-pressed="'+(filter===f[0])+'">'+f[1]+'</button>'}).join("")}
+function statusLabel(b){var p=profit(b);return b.status==="pending"?'<span class="st" style="color:var(--warn)">Pending</span>':b.status==="void"?'<span class="st zero">Void</span>':'<span class="st '+cls(p)+'">'+(b.status==="cashout"?"Cash out":(p>0?"Won":"Lost"))+'</span><br><b class="'+cls(p)+'">'+money(p,true)+'</b>'}
+function renderList(){
+  var L=sorted(S.bets).reverse().filter(function(b){
+    if(filter==="all")return true;if(filter==="pending")return b.status==="pending";if(filter==="settled")return settled(b)||b.status==="void";
+    var p=profit(b);return filter==="win"?(p!=null&&p>0.004):(p!=null&&p<-0.004)});
+  $("emptyMsg").style.display=S.bets.length?"none":"block";
+  $("listNote").textContent=S.bets.length?S.bets.length+" total":"";
+  $("blist").innerHTML=L.map(function(b){
+    var odds=b.odds===""||b.odds==null||isNaN(+b.odds)?"":(+b.odds>0?"+":"")+(+b.odds)+" \u00b7 ";
+    var meta=odds+money(+b.stake||0)+" \u00b7 "+esc(b.type||"")+(b.book&&b.book!==b.type?" \u00b7 "+esc(b.book):"");
+    var p=profit(b),res=b.status==="pending"?'<span class="st" style="color:var(--warn)">Pending</span>':b.status==="void"?'<span class="st zero">Void</span>':'<span class="st '+cls(p)+'">'+(b.status==="cashout"?"Cash out ":(p>0?"Won ":"Lost "))+money(p,true)+'</span>';
+    var act='<div class="row-actions">'+(b.status==="pending"?'<button class="btn sm" data-a="win" data-id="'+b.id+'">Won</button><button class="btn sm sec" data-a="loss" data-id="'+b.id+'">Lost</button><button class="btn sm sec" data-a="cash" data-id="'+b.id+'">Cash out</button><button class="btn sm sec" data-a="void" data-id="'+b.id+'">Void</button>':'')+'<button class="btn sm sec" data-a="edit" data-id="'+b.id+'">Edit</button><button class="btn sm sec" data-a="del" data-id="'+b.id+'">Delete</button></div>';
+    return '<div class="bc'+(b.excl?" ex":"")+'"><div class="bc-top"><span class="m">'+fmtD(b.date)+(b.tag?' \u00b7 <span class="tag">'+esc(b.tag)+'</span>':'')+(b.excl?'<span class="tag">not in totals</span>':'')+'</span>'+res+'</div><b class="t">'+esc(b.desc)+'</b><div class="m">'+meta+'</div>'+(b.notes?'<div class="m">'+esc(b.notes)+'</div>':'')+act+'<div id="ask-'+b.id+'"></div></div>'}).join("");
+}
+function renderTypes(){
+  var groups={};
+  S.bets.forEach(function(b){if(!counted(b)||!settled(b))return;[b.type||"Other"].concat(b.tag?["#"+b.tag]:[]).forEach(function(k){(groups[k]=groups[k]||[]).push(b)})});
+  var keys=Object.keys(groups).sort(function(a,c){var ah=a[0]==="#",ch=c[0]==="#";return ah-ch||a.localeCompare(c)});
+  $("typeTb").innerHTML=keys.length?keys.map(function(k){var s=stats(groups[k]),roi=s.staked>0?100*s.profit/s.staked:null;return '<tr><td>'+esc(k)+'</td><td class="n">'+s.n+'</td><td class="n">'+s.w+"–"+s.l+'</td><td class="n">'+money(s.staked)+'</td><td class="n '+cls(s.profit)+'"><b>'+money(s.profit,true)+'</b></td><td class="n '+(roi==null?"zero":cls(roi))+'">'+(roi==null?"—":(roi>=0?"+":"−")+Math.abs(roi).toFixed(0)+"%")+'</td></tr>'}).join(""):'<tr><td colspan="6" class="empty">Nothing settled yet.</td></tr>';
+}
+function renderAll(){renderKpis();lineChart();barChart();renderFilters();renderList();renderTypes();$("bankroll").value=S.bankroll||""}
+/* ---- form ---- */
+function today(){var d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function toggleCash(){$("cashWrap").style.display=$("fStatus").value==="cashout"?"":"none"}
+function resetForm(){edit=null;$("f").reset();$("fDate").value=today();$("formTitle").textContent="Add a bet";$("fSave").textContent="Save bet";$("fCancel").style.display="none";toggleCash();$("fMsg").textContent=""}
+function msg(id,t,bad){var e=$(id);e.textContent=t;e.style.color=bad?"var(--bad)":"var(--good)"}
+function parseOdds(v){v=String(v).trim().replace(/[−–]/g,"-");if(v==="")return"";var n=+v;return isNaN(n)||Math.abs(n)<100||Math.abs(n)>1e6?NaN:n}
+$("fStatus").addEventListener("change",toggleCash);
+$("f").addEventListener("submit",function(e){
+  e.preventDefault();
+  var odds=parseOdds($("fOdds").value),stake=+$("fStake").value,st=$("fStatus").value,cash=$("fCash").value===""?"":+$("fCash").value;
+  if(!(stake>0))return msg("fMsg","Enter a stake above $0.",1);
+  if(isNaN(odds))return msg("fMsg","Odds must be American, like +250 or -130.",1);
+  if((st==="win"||st==="pending")&&odds==="")return msg("fMsg","Enter the odds so the payout can be worked out.",1);
+  if(st==="cashout"&&(cash===""||isNaN(cash)||cash<0))return msg("fMsg","Enter how much you got back from the cash-out.",1);
+  var o={id:edit||uid(),date:$("fDate").value,desc:$("fDesc").value.trim(),type:$("fType").value,book:$("fBook").value,odds:odds,stake:stake,status:st,cash:st==="cashout"?cash:"",tag:$("fTag").value.trim(),notes:$("fNotes").value.trim(),excl:$("fEx").checked,created:Date.now()};
+  if(edit){var i=S.bets.findIndex(function(b){return b.id===edit});if(i>=0){o.created=S.bets[i].created||o.created;if(S.bets[i].payout&&odds==="")o.payout=S.bets[i].payout;S.bets[i]=o}}else S.bets.push(o);
+  save();var was=edit;resetForm();renderAll();msg("fMsg",(was?"Bet updated.":"Bet saved.")+(memOnly?" Browser storage is blocked, so this will be lost when you close the page.":""))
+});
+$("fCancel").addEventListener("click",resetForm);
+function startEdit(id){var b=S.bets.find(function(x){return x.id===id});if(!b)return;edit=id;$("fDate").value=b.date;$("fType").value=b.type||"Other";$("fDesc").value=b.desc;$("fBook").value=b.book||"Other";$("fOdds").value=b.odds===""||b.odds==null?"":(+b.odds>0?"+":"")+b.odds;$("fStake").value=b.stake;$("fStatus").value=b.status;$("fCash").value=b.cash===""||b.cash==null?"":b.cash;$("fTag").value=b.tag||"";$("fNotes").value=b.notes||"";$("fEx").checked=!!b.excl;toggleCash();$("formTitle").textContent="Edit bet";$("fSave").textContent="Save changes";$("fCancel").style.display="";$("fMsg").textContent="";$("f").scrollIntoView({behavior:"smooth",block:"center"})}
+/* ---- list actions ---- */
+$("blist").addEventListener("click",function(e){
+  var t=e.target.closest("button");if(!t)return;var id=t.getAttribute("data-id"),a=t.getAttribute("data-a"),b=S.bets.find(function(x){return x.id===id});if(!b)return;
+  if(a==="edit")return startEdit(id);
+  if(a==="win"||a==="loss"||a==="void"){if(a==="win"&&(b.odds===""||b.odds==null)&&!b.payout){startEdit(id);return msg("fMsg","Add the odds for this bet, set it to Won, then save.",1)}b.status=a;save();return renderAll()}
+  var box=$("ask-"+id);
+  if(a==="cash"){box.innerHTML='<div class="row-actions" style="margin-top:6px"><input inputmode="decimal" placeholder="$ you got back" style="width:150px" id="c-'+id+'"><button class="btn sm" data-a="cashok" data-id="'+id+'">Save</button></div>';return}
+  if(a==="cashok"){var v=+$("c-"+id).value;if(isNaN(v)||v<0||$("c-"+id).value==="")return;b.status="cashout";b.cash=v;save();return renderAll()}
+  if(a==="del"){box.innerHTML='<div class="row-actions" style="margin-top:6px"><span class="m">Delete this bet?</span><button class="btn sm bad" data-a="delok" data-id="'+id+'">Yes, delete</button><button class="btn sm sec" data-a="delno" data-id="'+id+'">Keep</button></div>';return}
+  if(a==="delno"){box.innerHTML="";return}
+  if(a==="delok"){S.bets=S.bets.filter(function(x){return x.id!==id});save();renderAll()}
+});
+$("filters").addEventListener("click",function(e){var t=e.target.closest("button");if(!t)return;filter=t.getAttribute("data-f");renderFilters();renderList()});
+/* ---- data ---- */
+$("bankroll").addEventListener("change",function(){S.bankroll=Math.max(0,+$("bankroll").value||0);save();renderAll()});
+function dl(name,mime,text){var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([text],{type:mime}));a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500)}
+$("exJson").addEventListener("click",function(){dl("game-sheets-bets-"+today()+".json","application/json",JSON.stringify({version:1,bankroll:S.bankroll,bets:S.bets},null,1));msg("dMsg","Backup downloaded.")});
+$("exCsv").addEventListener("click",function(){var h=["date","bet","type","book","odds","stake","status","cash_out","profit","tag","in_totals","notes"],q=function(v){v=String(v==null?"":v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};dl("game-sheets-bets-"+today()+".csv","text/csv",[h.join(",")].concat(sorted(S.bets).map(function(b){var p=profit(b);return[b.date,b.desc,b.type,b.book,b.odds,b.stake,b.status,b.cash,p==null?"":p.toFixed(2),b.tag,b.excl?"no":"yes",b.notes].map(q).join(",")})).join("\n"));msg("dMsg","Spreadsheet downloaded.")});
+$("imp").addEventListener("change",function(e){
+  var f=e.target.files[0];if(!f)return;var r=new FileReader();
+  r.onload=function(){try{var o=JSON.parse(r.result);if(!o||!Array.isArray(o.bets))throw 0;var have={};S.bets.forEach(function(b){have[b.id]=1});var add=0;o.bets.forEach(function(b){if(!b||!b.date||!b.desc||!(+b.stake>0))return;if(!b.id)b.id=uid();if(have[b.id])return;b.created=b.created||Date.now()+add;S.bets.push(b);have[b.id]=1;add++});if(!S.bankroll&&+o.bankroll)S.bankroll=+o.bankroll;save();renderAll();msg("dMsg","Imported "+add+" new bet"+(add===1?"":"s")+" (bets already here were skipped).")}catch(x){msg("dMsg","That file is not a Game Sheets backup.",1)}e.target.value=""};
+  r.readAsText(f)});
+var armed=false;
+$("clr").addEventListener("click",function(){var b=$("clr");if(!armed){armed=true;b.textContent="Tap again to delete everything";setTimeout(function(){armed=false;b.textContent="Delete all bets"},4000);return}S.bets=[];S.bankroll=0;save();armed=false;b.textContent="Delete all bets";renderAll();msg("dMsg","All bets deleted.")});
+load();$("fDate").value=today();renderAll();
+if(memOnly)msg("dMsg","This browser is blocking storage, so bets will not be saved after you leave the page.",1);
+})();
+</script>
+</body></html>
